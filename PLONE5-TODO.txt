@@ -1,0 +1,54 @@
+Notes about Plone 5
+===================
+
+To support Plone 5, various changes must be made.  For trying it out,
+I made a few hacks in the controlpanel configlet so that Plone at
+least starts up, even though the controlpanel is then broken.  The
+basic functionality then works: SEO properties are shown and our edit
+form works.  The javascript on the edit form does *not* work.  The
+configlet is almost beyond repair.
+
+
+Must
+----
+
+- Fix ImportErrors in configlet:
+
+    from plone.app.controlpanel.form import ControlPanelForm
+    from plone.app.controlpanel.widgets import MultiCheckBoxThreeColumnWidget
+
+  This has completely been restructured in Plone.
+  Best seems to be to move to **plone.app.registry** as base.
+
+- Same for these ImportErrors in the configlet:
+
+    from Products.CMFDefault.formlib.schema import ProxyFieldProperty
+    from Products.CMFDefault.formlib.schema import SchemaAdapterBase
+
+  CMFDefault is gone.  Probably not needed if we restructure to
+  plone.app.registry.  Temporary workaround: added Products.CMFDefault
+  in setup.py.
+
+- If we change to plone.app.registry, this needs migration.
+
+- Fix our javascript to not call ``registerPloneFunction``, because it
+  does not exist anymore. In other words: our javascript does not
+  work.
+
+- Fix tests.  Total: 100 tests, 36 failures, 1 errors.
+
+
+Preferably
+----------
+
+- Replace zope.app.form.browser.TextAreaWidget with something else (in
+  zeo_configlet.py).  As workaround I added zope.app.form to setup.py.
+
+- See if plone.fieldsets is still needed.  May be fine, but it is not
+  included by default in Plone.  Added to setup.py.
+
+- Remove code that is only there to support Plone 3, like importing
+  zope.app.component.hooks.  Maybe remove support for 4.0, 4.1,
+  maybe 4.2, if it is in the way. With 4.1+ plone.app.registry is
+  supported, so that could be a reasonable minimum.  But for
+  simplicity I would say: only 4.3 and 5.0.  Or only 5.0, fine too.
