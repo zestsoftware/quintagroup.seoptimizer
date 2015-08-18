@@ -16,8 +16,13 @@ except ImportError:
 from zope.app.form.browser import TextAreaWidget
 
 from plone.fieldsets.fieldsets import FormFieldsets
-from plone.app.controlpanel.form import ControlPanelForm
-from plone.app.controlpanel.widgets import MultiCheckBoxThreeColumnWidget
+try:
+    from plone.app.controlpanel.form import ControlPanelForm
+    from plone.app.controlpanel.widgets import MultiCheckBoxThreeColumnWidget
+except:
+    # Plone >= 5
+    ControlPanelForm = object
+    MultiCheckBoxThreeColumnWidget = object
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import safe_unicode
@@ -199,8 +204,9 @@ class SEOConfiglet(ControlPanelForm):
 
     form_fields['default_custom_metatags'].custom_widget = Text2ListWidget
     form_fields['metatags_order'].custom_widget = Text2ListWidget
-    form_fields['types_seo_enabled'].custom_widget = type_seo_enabled
-    form_fields['types_seo_enabled'].custom_widget.cssClass = 'label'
+    # TODO re-enable:
+    # form_fields['types_seo_enabled'].custom_widget = type_seo_enabled
+    # form_fields['types_seo_enabled'].custom_widget.cssClass = 'label'
     form_fields['fields'].custom_widget = Text2ListWidget
     form_fields['stop_words'].custom_widget = Text2ListWidget
 
